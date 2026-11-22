@@ -380,6 +380,13 @@ function changelogPage() {
   return { slug:"changelog", html:shell({title:"Changelog | "+BRAND, desc:fitMeta("ShiftSpec changelog: dated wave releases, data updates and prune-or-improve decisions."), slug:"changelog", body, jsonld:[bcLd([{t:"Home",href:"/"},{t:"Changelog"}])], noindex:true}) };
 }
 
+execFileSync(process.execPath, ["scripts/homepage.mjs"], { stdio: "inherit" });
+execFileSync(process.execPath, ["scripts/about.mjs"], { stdio: "inherit" });
+execFileSync(process.execPath, ["scripts/contact.mjs"], { stdio: "inherit" });
+execFileSync(process.execPath, ["scripts/privacy.mjs"], { stdio: "inherit" });
+execFileSync(process.execPath, ["scripts/faq.mjs"], { stdio: "inherit" });
+execFileSync(process.execPath, ["scripts/shop.mjs"], { stdio: "inherit" });
+
 mkdirSync(DIST, { recursive: true });
 const pages = [homePage(), glossaryPage(), shopPage(), creditsPage(), changelogPage(),
   ...[...new Set(rows.map(r=>r.category))].map(hubPage),

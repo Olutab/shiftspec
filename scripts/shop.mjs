@@ -1,0 +1,27 @@
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+const COLS = ["id","slug","entity_name","alias","category","summary_fact","source_url","source_name","last_checked","auditing_status","image_query","wave","patient_grid","shift_fit","format","detail_tier","editable_fields","unit_sections","handoff_layout","week1_aids","print_spec","wrong_for"];
+const lines = readFileSync("data/matrix.txt","utf8").split(/\r?\n/).filter(l=>l.trim()&&!l.startsWith("#"));
+lines.shift();
+const rows = lines.map(l=>Object.fromEntries(COLS.map((c,i)=>[c,l.split("|")[i].trim()]))).filter(r=>r.auditing_status!=="UNVERIFIED-DRAFT");
+const PER_PAGE = 30;
+const totalPages = Math.ceil(rows.length/PER_PAGE);
+mkdirSync("dist/shop", { recursive: true });
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+for(let page=1;page<=totalPages;page++){
+  const start = (page-1)*PER_PAGE;
+  const items = rows.slice(start,start+PER_PAGE);
+  const cards = items.map(r=>`<div class="card"><h3><a href="/sheets/${r.slug}/">${esc(r.entity_name)}</a></h3><p>${esc(r.summary_fact)}</p><span class="tag">${r.patient_grid} ${r.category==="postpartum"?"couplets":"pts"}</span> <span class="tag">${r.format}</span> <span class="tag">${r.shift_fit}</span></div>`).join("");
+  const pagination = `<div class="pagination" style="margin:2rem 0;text-align:center">`;
+  const pages = [];
+  if(page>1) pages.push(`<a href="/shop/${page===2?"":page-1}" class="btn ghost">← Prev</a>`);
+  for(let i=1;i<=totalPages;i++){
+    if(i===page) pages.push(`<span class="btn" style="opacity:.5">${i}</span>`);
+    else if(i===1||i===totalPages||Math.abs(i-page)<=2) pages.push(`<a href="/shop/${i===1?"":i}" class="btn ghost">${i}</a>`);
+    else if(Math.abs(i-page)===3) pages.push(`<span style="padding:.5rem">…</span>`);
+  }
+  if(page<totalPages) pages.push(`<a href="/shop/${page+1}" class="btn ghost">Next →</a>`);
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shop — Page ${page} of ${totalPages} | ShiftSpec</title><meta name="description" content="Browse all ${rows.length} brain sheet templates. Page ${page} of ${totalPages}. Filter by unit, format, and shift."><link rel="canonical" href="https://shiftspec.vercel.app/shop/${page===1?"":page}"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"></head><body><header class="site"><a class="brand" href="/"><svg viewBox="0 0 32 32" class="logo" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="3" class="lg-frame"/><line x1="16" y1="3" x2="16" y2="29" class="lg-line"/><line x1="3" y1="16" x2="29" y2="16" class="lg-line"/><rect x="18" y="18" width="9" height="9" class="lg-fill"/></svg>ShiftSpec</a><nav><a href="/">Home</a><a href="/shop/">Shop</a><a href="/tool/">Finder</a><a href="/about/">About</a><a href="/faq/">FAQ</a></nav></header><div class="wrap"><p class="crumb"><a href="/">Home</a> / Shop</p><h1>All Templates</h1><p style="text-align:center;opacity:.8">Page ${page} of ${totalPages} · ${rows.length} total templates</p><div class="facets"><label>Unit <select id="unit"><option value="">All</option><option value="med-surg">Med-Surg</option><option value="telemetry">Telemetry</option><option value="stepdown">Stepdown</option><option value="icu">ICU</option><option value="nicu">NICU</option><option value="l-and-d">L&D</option><option value="postpartum">Postpartum</option><option value="peds">Peds</option><option value="ed">ED</option><option value="float-pool">Float-Pool</option></select></label> <label>Format <select id="format"><option value="">All</option><option value="fillable-pdf">PDF</option><option value="excel">Excel</option><option value="google-sheets">Sheets</option><option value="goodnotes">GoodNotes</option><option value="print">Print</option></select></label> <label>Shift <select id="shift"><option value="">All</option><option value="any">Any</option><option value="nights">Nights</option></select></label></div><div class="grid">${cards}</div>${pagination}${pages.join(" ")}</div></div><footer class="site"><p>ShiftSpec — hyper-specific, fully editable nurse brain-sheet specs.</p><p><a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/privacy/">Privacy</a> · <a href="/faq/">FAQ</a></p></footer><script>document.querySelectorAll('.facets select').forEach(s=>s.addEventListener('change',()=>{const u=document.getElementById('unit').value,f=document.getElementById('format').value,sh=document.getElementById('shift').value;document.querySelectorAll('.card').forEach(c=>{const m=!u||c.textContent.toLowerCase().includes(u);const mf=!f||c.textContent.toLowerCase().includes(f);const ms=!sh||c.textContent.toLowerCase().includes(sh);c.style.display=m&&mf&&ms?'':'none';});}));</script></body></html>`;
+  mkdirSync(`dist/shop/${page===1?"":"page"+page}`, { recursive: true });
+  writeFileSync(`dist/shop/${page===1?"index.html":"page"+page+"/index.html"}`, html);
+}
+console.log(`✓ Shop created: ${totalPages} page(s), ${rows.length} templates`);

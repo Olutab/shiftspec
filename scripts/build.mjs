@@ -127,7 +127,7 @@ function shell({ title, desc, slug, body, jsonld, noindex = false, hub = false }
   pageSet.add(slug);
   const canonical = SITE_URL + url(slug);
   const ld = jsonld.map(j => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join("\n");
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="google-site-verification" content="7vIyLGQlBH3RsZDkvVpr7DB5bpvx1pBTYKcNYywzD2M" />
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 ${noindex ? '<meta name="robots" content="noindex,follow">' : '<meta name="robots" content="index,follow">'}
 <link rel="canonical" href="${canonical}">

@@ -17,6 +17,16 @@ function parseMatrix(file) {
 const all = parseMatrix("data/matrix.txt");
 const rows = all.filter(r => Number(r.wave) <= WAVE && r.auditing_status !== "UNVERIFIED-DRAFT");
 
+const offers = {};
+if (existsSync("data/offers.txt")) {
+  for (const l of readFileSync("data/offers.txt","utf8").split(/\r?\n/)) {
+    if (!l.trim() || l.startsWith("#")) continue;
+    const [slug, checkout, etsy, aff, affLabel] = l.split("|").map(s => s.trim());
+    offers[slug] = { checkout, etsy, aff, affLabel };
+  }
+}
+
+
 mkdirSync("specs", { recursive: true });
 for (const d of all) {
   writeFileSync(`specs/${d.slug}.md`, `# ${d.entity_name} — design spec (first-party)\nSlug: ${d.slug}\nCategory: ${d.category} · Grid: ${d.patient_grid} · Shift: ${d.shift_fit} · Format: ${d.format} · Tier: ${d.detail_tier}\nEditable fields: ${d.editable_fields} · Sections: ${d.unit_sections} · Handoff: ${d.handoff_layout}\nWeek-1 aids: ${d.week1_aids || "none"} · Print: ${d.print_spec}\nWrong for: ${d.wrong_for}\nStatus: ${d.auditing_status} · Last checked: ${d.last_checked}\n`);
@@ -118,10 +128,15 @@ footer.site{border-top:2px solid var(--ink);margin-top:2rem;padding:1rem;font-si
 .btn.ghost{background:transparent;color:var(--accent)}
 .pagination{margin:2rem 0;text-align:center}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .12s}.card:hover{border-color:var(--accent)}}
-@media print{header.site,footer.site,.facets,.cta,.crumb nav,.hero{display:none}body{background:#fff;color:#000;font-size:12px}.spec{border:1px solid #000}.answer{border-left:3px solid #000}a{color:#000;text-decoration:none}}`;
+@media print{header.site,footer.site,.facets,.cta,.crumb nav,.hero{display:none}body{background:#fff;color:#000;font-size:12px}.spec{border:1px solid #000}.answer{border-left:3px solid #000}a{color:#000;text-decoration:none}}
+.timeline{display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0}
+.phase{display:flex;align-items:center;gap:.4rem;background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:.4rem .9rem;font:600 .85rem var(--sans)}
+.phase-dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.rule-row{display:flex;gap:.7rem;align-items:flex-start;margin:.6rem 0}
+.rule-swatch{width:18px;height:18px;border-radius:4px;flex:none;margin-top:.15rem}`;
 
 const pageSet = new Set();
-const url = slug => slug === "home" ? "/" : slug === "tool" ? "/tool/" : slug === "glossary" ? "/glossary/" : slug === "shop" ? "/shop/" : slug.startsWith("shop-") ? `/shop/${slug.slice(5)}/` : slug === "about" ? "/about/" : slug === "contact" ? "/contact/" : slug === "privacy" ? "/privacy/" : slug === "faq" ? "/faq/" : slug === "credits" ? "/credits/" : slug === "changelog" ? "/changelog/" : slug.startsWith("hub-") ? `/units/${slug.slice(4)}/` : slug.startsWith("guide-") ? `/formats/${slug.slice(6)}/` : `/sheets/${slug}/`;
+const url = slug => slug === "home" ? "/" : slug === "tool" ? "/tool/" : slug === "glossary" ? "/glossary/" : slug === "shop" ? "/shop/" : slug === "premium" ? "/premium/" : slug.startsWith("shop-") ? `/shop/${slug.slice(5)}/` : slug === "about" ? "/about/" : slug === "contact" ? "/contact/" : slug === "privacy" ? "/privacy/" : slug === "faq" ? "/faq/" : slug === "credits" ? "/credits/" : slug === "changelog" ? "/changelog/" : slug.startsWith("hub-") ? `/units/${slug.slice(4)}/` : slug.startsWith("guide-") ? `/formats/${slug.slice(6)}/` : `/sheets/${slug}/`;
 
 function shell({ title, desc, slug, body, jsonld, noindex = false, hub = false }) {
   let dEsc = esc(desc);
@@ -161,7 +176,7 @@ function entityPage(d) {
   const wrongHtml=`<div class="warn"><strong>Wrong choice if:</strong> ${esc(d.wrong_for)}</div>`;
   const wrongPart=parts.find(p=>p.h==="When this is the wrong sheet");const rest=parts.filter(p=>p!==wrongPart);
   const answerBlock=`<p class="answer">${esc(a)}</p>`;const svg=specSVG(d);
-  const links=`<p>More in the <a href="${url(hubSlug)}">${UNIT[d.category]} hub</a> · <a href="${url(guideSlug)}">${FMT[d.format].word} guide</a>.</p>`;
+  const links=`<p>More in the <a href="${url(hubSlug)}">${UNIT[d.category]} hub</a> · <a href="${url(guideSlug)}">${FMT[d.format].word} guide</a>.</p>${premiumUpsell}`;
   let main;
   if(tpl==="orientation"){const w1p=rest.find(p=>p.h.startsWith("Week-1"));const fitp=rest.find(p=>p.h==="Why this grid size");main=[answerBlock,svg,wrongHtml,w1p?sectionHtml(w1p):"",fitp?sectionHtml(fitp):"",secTable,...rest.filter(p=>p!==w1p&&p!==fitp).map(sectionHtml),nbHtml,faqHtml,cite,links].join("\n");}
   else if(tpl==="deep")main=[answerBlock,secTable,svg,...rest.map(sectionHtml),wrongHtml,nbHtml,faqHtml,cite,links].join("\n");
@@ -174,7 +189,7 @@ function entityPage(d) {
 
 // --- PREMIUM PAGES (Integrated into Engine) ---
 function homePage() {
-  const body = `<section class="hero"><h1>Brain Sheets That Fit Your Assignment</h1><p>Blueprint-grade templates for float pool, travel, and night-shift nurses. Editable, specific, built for real shifts — not generic PDFs that don't work.</p><a href="/shop/" class="hero-cta">Browse All Templates →</a></section>
+  const body = `<section class="hero"><h1>Brain Sheets That Fit Your Assignment</h1><p>Blueprint-grade templates for float pool, travel, and night-shift nurses. Editable, specific, built for real shifts — not generic PDFs that don't work.</p><a href="/shop/" class="hero-cta">Browse All Templates →</a> <a href="/premium/" class="hero-cta" style="background:#E8EEF4">See the Premium Master Sheet →</a></section>
   <h2 style="text-align:center;margin-top:3rem">Featured Templates</h2><div class="grid">
   <div class="card featured-card"><span class="badge">Best Seller</span><h3><a href="/sheets/icu-2-patient-brain-sheet-fillable-pdf/">ICU 2-Patient Brain Sheet</a></h3><p>Deep-detail layout with 74 fillable fields, systems report rows, and drip/vent tracking.</p></div>
   <div class="card featured-card"><span class="badge">Night Shift</span><h3><a href="/sheets/med-surg-5-patient-night-brain-sheet-excel/">Med-Surg 5-Patient Night Sheet</a></h3><p>Task-grid layout with pending list first. 62 editable cells for 5-patient night assignments.</p></div>
@@ -196,7 +211,7 @@ function shopPages() {
       if(page<totalPages) pagesHtml += `<a href="${url("shop-"+(page+1))}" class="btn ghost">Next →</a>`;
       pagesHtml += `</div>`;
     }
-    const body = crumb([{t:"Shop"}]) + `<h1>All Templates</h1><p style="text-align:center;opacity:.8">Page ${page} of ${totalPages} · ${rows.length} total templates</p>
+    const body = crumb([{t:"Shop"}]) + `<h1>All Templates</h1>${page===1?premiumCard:""}<p style="text-align:center;opacity:.8">Page ${page} of ${totalPages} · ${rows.length} total templates</p>
     <div class="facets"><label>Unit <select data-k="cat"><option value="">All</option>${[...new Set(rows.map(r=>r.category))].map(c=>`<option value="${c}">${UNIT[c]}</option>`).join("")}</select></label> <label>Format <select data-k="format"><option value="">All</option>${Object.keys(FMT).map(f=>`<option value="${f}">${FMT[f].word}</option>`).join("")}</select></label> <label>Shift <select data-k="shift"><option value="">All</option><option value="nights">nights</option><option value="any">any</option></select></label></div>
     <div class="grid">${cards}</div>${pagesHtml}<p class="scope">Organization aids, not clinical guidance.</p>`;
     const slug = page===1 ? "shop" : "shop-"+page;
@@ -219,9 +234,39 @@ function guidePage(fmt){const items=rows.filter(r=>r.format===fmt);const body=cr
 const GLOSS=[["Brain sheet","A single-page personal organizer."],["SBAR","Situation, Background, Assessment, Recommendation."]];
 function glossaryPage(){const body=crumb([{t:"Glossary"}])+`<h1>Brain-sheet glossary</h1><dl class="faq">${GLOSS.map(([t,d])=>`<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join("")}</dl>`;return { slug:"glossary", html:shell({title:"Brain-Sheet Glossary | "+BRAND, desc:fitMeta("Plain-language definitions."), slug:"glossary", body, jsonld:[bcLd([{t:"Home",href:"/"},{t:"Glossary"}])]}) };}
 
+const PHASE_COLORS = ["#0B5FA5","#0E7490","#047857","#B45309","#9A3412","#334155"];
+const PHASES = ["Pre-shift","Start-of-shift","Mid-shift","Pre-handoff","Handoff","Post-shift"];
+const RULES = [
+  {color:"#9A3412", label:"Red — act now", use:"Unstable vitals, new orders, time-critical meds due this hour."},
+  {color:"#B45309", label:"Amber — this shift", use:"Must be done before handoff but not this minute."},
+  {color:"#047857", label:"Green — routine", use:"Scheduled checks and documentation on the normal cadence."},
+  {color:"#334155", label:"Slate — delegate or defer", use:"Can be passed on or safely waits for the next phase."}
+];
+const premiumCheckout = (offers["premium"] && offers["premium"].checkout) || "";
+const premiumUpsell = premiumCheckout
+  ? `<p><strong>Want the whole system?</strong> <a class="cta" href="${premiumCheckout}" rel="noopener">Get the Master Shift Command Center</a></p>`
+  : `<p><strong>Want the whole system?</strong> <a href="${url("premium")}">See the Master Shift Command Center →</a></p>`;
+const premiumCard = `<div class="card featured-card"><span class="badge">Premium</span><h3><a href="${url("premium")}">The Master Shift Command Center</a></h3><p>Color-coded priority rules, a six-phase shift timeline, and a branded cover page — the whole system on one surface.</p></div>`;
+function premiumPage(){
+  const cta = premiumCheckout ? `<a class="cta" href="${premiumCheckout}" rel="noopener">Buy on Payhip</a>` : `<a class="cta" href="/contact/">Checkout link not set yet</a>`;
+  const timeline = PHASES.map((p,i)=>`<div class="phase"><span class="phase-dot" style="background:${PHASE_COLORS[i]}"></span>${p}</div>`).join("");
+  const rules = RULES.map(r=>`<div class="rule-row"><span class="rule-swatch" style="background:${r.color}"></span><div><strong>${r.label}.</strong> ${r.use}</div></div>`).join("");
+  const body = crumb([{t:"Premium"}]) + `<h1>The Master Shift Command Center</h1>` +
+    `<p class="answer">One premium sheet that runs your whole shift: color-coded priority rules, a six-phase timeline, and a branded cover page. For nurses who want the entire system on a single surface instead of juggling three sheets.</p>` +
+    `<h2>Color-coded priority rules</h2><div class="card">${rules}</div>` +
+    `<h2>Shift phase timeline</h2><div class="timeline">${timeline}</div>` +
+    `<h2>What's inside</h2><ul><li>Branded cover page for print or digital binders</li><li>Six-phase timeline strip you fill as the shift moves</li><li>Color-coded priority legend matched to the rules above</li><li>Every standard tracking block plus float and overflow room</li></ul>` +
+    `<h2>Get it</h2><p>${cta}</p>` +
+    `<p class="scope">Organization aid, not clinical guidance. The color system is a personal priority method, not a facility protocol.</p>`;
+  const jsonld = premiumCheckout
+    ? [{"@context":"https://schema.org","@type":"Product","name":"The Master Shift Command Center","description":"Premium nurse brain sheet with color-coded priority rules, a six-phase shift timeline, and a branded cover page.","offers":{"@type":"Offer","url":premiumCheckout,"availability":"https://schema.org/InStock"}}, bcLd([{t:"Home",href:"/"},{t:"Premium"}])]
+    : [bcLd([{t:"Home",href:"/"},{t:"Premium"}])];
+  return { slug:"premium", html:shell({title:"Master Shift Command Center | "+BRAND, desc:fitMeta("Premium nurse brain sheet with color-coded priority rules, a six-phase shift timeline, and a branded cover page."), slug:"premium", body, jsonld}) };
+}
+
 // --- RENDER ALL ---
 mkdirSync(DIST, { recursive: true });
-const pages = [homePage(), ...shopPages(), aboutPage(), contactPage(), privacyPage(), faqPage(), glossaryPage(), creditsPage(), changelogPage(), ...[...new Set(rows.map(r=>r.category))].map(hubPage), ...Object.keys(FMT).map(guidePage), ...rows.map(entityPage)];
+const pages = [homePage(), premiumPage(), ...shopPages(), aboutPage(), contactPage(), privacyPage(), faqPage(), glossaryPage(), creditsPage(), changelogPage(), ...[...new Set(rows.map(r=>r.category))].map(hubPage), ...Object.keys(FMT).map(guidePage), ...rows.map(entityPage)];
 function writePage(p){ const u=url(p.slug),dir=path.join(DIST,u);mkdirSync(dir,{recursive:true});writeFileSync(path.join(dir,"index.html"),p.html); }
 pages.forEach(writePage);
 writeFileSync(path.join(DIST,"style.css"), CSS);

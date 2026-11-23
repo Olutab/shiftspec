@@ -5,4 +5,3 @@ Editable fields: 0 · Sections: couplet;feedings;io;falls · Handoff: head-to-to
 Week-1 aids: none · Print: letter-bw
 Wrong for: Nurses who want editable fields; this one is fixed by design.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

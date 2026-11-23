@@ -5,4 +5,3 @@ Editable fields: 68 · Sections: io;pain;falls;isolation · Handoff: systems
 Week-1 aids: none · Print: letter-bw
 Wrong for: Postpartum couplet care; mother-baby pairs need the couplet sheet.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

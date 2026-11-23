@@ -5,4 +5,3 @@ Editable fields: 58 · Sections: io;falls;isolation;glucose;pain;discharge · Ha
 Week-1 aids: none · Print: letter-bw
 Wrong for: Assignments over 4 patients, or units where handoff happens only inside the EHR.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

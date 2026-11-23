@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
   "validate": "node scripts/validate.mjs",
-  "build": "node scripts/build.mjs && node scripts/homepage.mjs && node scripts/about.mjs && node scripts/contact.mjs && node scripts/privacy.mjs && node scripts/faq.mjs && node scripts/shop.mjs",
+  "build": "node scripts/build.mjs",
   "app": "vite build",
   "build:all": "npm run build && npm run app"
 },

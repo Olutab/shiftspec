@@ -5,4 +5,3 @@ Editable fields: 58 · Sections: telemetry;drips;io;glucose · Handoff: systems
 Week-1 aids: none · Print: none
 Wrong for: Nurses without GoodNotes; the PDF version fills on any tablet.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

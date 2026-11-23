@@ -5,4 +5,3 @@ Editable fields: 74 · Sections: drips;vents;io;isolation;wounds;pain · Handoff
 Week-1 aids: none · Print: letter-bw
 Wrong for: Assignments of 3 or more; two deep columns cannot stretch.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

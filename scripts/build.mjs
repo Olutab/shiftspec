@@ -124,14 +124,17 @@ const pageSet = new Set();
 const url = slug => slug === "home" ? "/" : slug === "tool" ? "/tool/" : slug === "glossary" ? "/glossary/" : slug === "shop" ? "/shop/" : slug.startsWith("shop-") ? `/shop/${slug.slice(5)}/` : slug === "about" ? "/about/" : slug === "contact" ? "/contact/" : slug === "privacy" ? "/privacy/" : slug === "faq" ? "/faq/" : slug === "credits" ? "/credits/" : slug === "changelog" ? "/changelog/" : slug.startsWith("hub-") ? `/units/${slug.slice(4)}/` : slug.startsWith("guide-") ? `/formats/${slug.slice(6)}/` : `/sheets/${slug}/`;
 
 function shell({ title, desc, slug, body, jsonld, noindex = false, hub = false }) {
+  let dEsc = esc(desc);
+  while (dEsc.length < 120) { desc += " Organization aids, not clinical guidance."; dEsc = esc(desc); }
+  if (dEsc.length > 160) { dEsc = dEsc.slice(0, 157); dEsc = dEsc.slice(0, dEsc.lastIndexOf(" ")) + "…"; }
   pageSet.add(slug);
   const canonical = SITE_URL + url(slug);
   const ld = jsonld.map(j => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join("\n");
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="google-site-verification" content="7vIyLGQlBH3RsZDkvVpr7DB5bpvx1pBTYKcNYywzD2M" />
-<title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
+<title>${esc(title)}</title><meta name="description" content="${dEsc}">
 ${noindex ? '<meta name="robots" content="noindex,follow">' : '<meta name="robots" content="index,follow">'}
 <link rel="canonical" href="${canonical}">
-<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:type" content="website"><meta property="og:url" content="${canonical}">
+<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${dEsc}"><meta property="og:type" content="website"><meta property="og:url" content="${canonical}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">${ld}</head>

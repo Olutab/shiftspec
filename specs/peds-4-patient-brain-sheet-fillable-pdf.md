@@ -5,4 +5,3 @@ Editable fields: 58 · Sections: io;feedings;falls;isolation;pain · Handoff: he
 Week-1 aids: none · Print: letter-bw
 Wrong for: Intensive-care assignments; PICU needs deeper per-patient blocks.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

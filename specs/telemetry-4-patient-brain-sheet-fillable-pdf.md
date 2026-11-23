@@ -5,4 +5,3 @@ Editable fields: 56 · Sections: telemetry;io;falls;glucose;pain · Handoff: sba
 Week-1 aids: none · Print: letter-bw
 Wrong for: Assignments over 4, or units without telemetry boxes to track.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

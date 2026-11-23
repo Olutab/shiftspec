@@ -5,4 +5,3 @@ Editable fields: 82 · Sections: drips;vents;io;wounds;isolation;glucose · Hand
 Week-1 aids: none · Print: letter-bw
 Wrong for: Paired assignments; half the sheet sits empty on a 2-patient night.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

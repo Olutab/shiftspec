@@ -5,4 +5,3 @@ Editable fields: 62 · Sections: telemetry;drips;io;falls;glucose · Handoff: sy
 Week-1 aids: none · Print: letter-bw
 Wrong for: Stable 5-patient tele loads; stepdown detail blocks waste space there.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

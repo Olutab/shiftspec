@@ -5,4 +5,3 @@ Editable fields: 70 · Sections: io;falls;glucose;discharge;isolation · Handoff
 Week-1 aids: none · Print: letter-bw
 Wrong for: Anyone offline at the bedside; Sheets needs a connection or cached offline files.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.

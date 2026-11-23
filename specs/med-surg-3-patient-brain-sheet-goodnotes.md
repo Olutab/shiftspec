@@ -5,4 +5,3 @@ Editable fields: 48 · Sections: io;falls;isolation;pain;discharge · Handoff: h
 Week-1 aids: none · Print: none
 Wrong for: Heavy 5-6 patient nights; three deep columns will run out of room.
 Status: SOURCED · Last checked: 2026-11-21
-Note: these counts are the build contract for the template pack, not measured facts about a shipped file. Update this row if the pack ships differently.
